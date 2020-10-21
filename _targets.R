@@ -36,6 +36,11 @@ tar_pipeline(
       mutate(Ozone = replace_na(Ozone, mean(Ozone, na.rm = TRUE)))
   ),
   tar_target(hist, create_plot(data)),
-  tar_target(fit, biglm(Ozone ~ Wind + Temp, data)),
+  tar_target(counter, 1:5),
+  tar_target(counter2, 1:5),
+  tar_target(fit, {
+    Sys.sleep(10)
+    list(biglm(Ozone ~ Wind + Temp, data))
+  }, pattern = cross(counter, counter2)),
   tar_render(report, "report.Rmd")
 )
